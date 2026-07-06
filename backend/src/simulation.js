@@ -206,7 +206,9 @@ export function step(state, log) {
   }
 
   // ---- Position + joints: sweep across the work surface -----------------
-  if (state.actualSpeed > 0.5 && !homing) {
+  // Gate on `running` (not raw speed) so pause/estop freeze motion instantly
+  // instead of coasting while the speed gauge decays.
+  if (running && !homing) {
     const travel = speedFrac * 0.05;
     state.position.x += Math.cos(state.heading) * travel;
     state.position.y += Math.sin(state.heading) * travel;

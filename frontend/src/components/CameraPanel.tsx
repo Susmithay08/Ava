@@ -37,6 +37,7 @@ export default function CameraPanel({ robot, animationSpeed }: { robot: Robot; a
   robotRef.current = robot;
   const rafRef = useRef<number>();
   const particles = useRef<{ x: number; y: number; vx: number; vy: number; life: number }[]>([]);
+  const armPhaseRef = useRef(0);
 
   const [source, setSource] = useState<Source>('robot');
   const sourceRef = useRef<Source>('robot');
@@ -129,7 +130,10 @@ export default function CameraPanel({ robot, animationSpeed }: { robot: Robot; a
       const r = robotRef.current;
       const w = canvas.width / devicePixelRatio;
       const h = canvas.height / devicePixelRatio;
-      const running = r.actualSpeed > 1 && r.status !== 'estop';
+      // Arm animates ONLY while genuinely running — pause/idle/estop freeze it.
+      const running = r.status === 'running';
+      if (running) armPhaseRef.current += 0.05 * animationSpeed;
+      const phase = armPhaseRef.current;
       const hc = r.health === 'fault' ? '#ef4444' : r.health === 'warning' ? '#f59e0b' : '#22c55e';
 
       // Background: workshop
@@ -211,7 +215,7 @@ export default function CameraPanel({ robot, animationSpeed }: { robot: Robot; a
       for (let x = 10; x < w; x += 60) ctx.fillRect(x, railY - 6, 6, 12);
 
       // ---- Carriage + arm following the frontier ----
-      const jitter = running ? Math.sin(Date.now() / 120) * 3 : 0;
+      const jitter = running ? Math.sin(phase * 6) * 3 : 0;
       const cx = Math.max(pL, Math.min(pR, frontier));
       // carriage
       ctx.fillStyle = '#374357';
@@ -219,7 +223,7 @@ export default function CameraPanel({ robot, animationSpeed }: { robot: Robot; a
       ctx.fillStyle = hc;
       ctx.fillRect(cx - 22, railY + 14, 44, 4);
       // arm segments (elbow bends with joint angle for life)
-      const elbowX = cx + Math.sin((robotRef.current.joints[1] || 0) + Date.now() / 900) * 18;
+      const elbowX = cx + Math.sin((r.joints[1] || 0) + phase) * 18;
       const elbowY = (railY + pT) / 2;
       const nozX = cx;
       const nozY = pT - 6 + jitter;
@@ -294,14 +298,18 @@ export default function CameraPanel({ robot, animationSpeed }: { robot: Robot; a
         ctx.fillText('OBSTACLE', ox - 18, oy - 20);
       });
 
-      // idle hint
-      if (!running && r.status !== 'estop') {
+      // status hint
+      ctx.textAlign = 'center';
+      if (r.status === 'idle') {
         ctx.fillStyle = 'rgba(255,255,255,0.5)';
         ctx.font = '12px monospace';
-        ctx.textAlign = 'center';
         ctx.fillText('▸ Press START JOB to begin surface preparation', w / 2, h * 0.3);
-        ctx.textAlign = 'left';
+      } else if (r.status === 'paused') {
+        ctx.fillStyle = 'rgba(245,158,11,0.9)';
+        ctx.font = 'bold 20px monospace';
+        ctx.fillText('❚❚ PAUSED', w / 2, h * 0.3);
       }
+      ctx.textAlign = 'left';
     };
     draw();
     return () => {
