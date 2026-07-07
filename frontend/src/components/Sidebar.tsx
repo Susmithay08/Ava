@@ -1,7 +1,7 @@
 import React from 'react';
-import { IconDashboard, IconRobot, IconDiagnostics, IconHistory, IconSettings } from './Icons';
+import { IconDashboard, IconRobot, IconDiagnostics, IconHistory } from './Icons';
 
-export type Page = 'overview' | 'dashboard' | 'robot' | 'diagnostics' | 'history' | 'settings';
+export type Page = 'overview' | 'dashboard' | 'robot' | 'diagnostics' | 'history';
 
 const NAV: { id: Page; label: string; icon: React.ReactNode }[] = [
   { id: 'overview', label: 'Overview', icon: <IconDashboard size={20} /> },
@@ -9,7 +9,6 @@ const NAV: { id: Page; label: string; icon: React.ReactNode }[] = [
   { id: 'robot', label: 'Robots', icon: <IconRobot size={20} /> },
   { id: 'diagnostics', label: 'Analytics', icon: <IconDiagnostics size={20} /> },
   { id: 'history', label: 'Events', icon: <IconHistory size={20} /> },
-  { id: 'settings', label: 'Settings', icon: <IconSettings size={20} /> },
 ];
 
 // Auto-hiding rail: 64px icon strip by default, expands to a labelled panel on

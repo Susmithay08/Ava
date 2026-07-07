@@ -9,7 +9,6 @@ import Dashboard from './pages/Dashboard';
 import RobotView from './pages/RobotView';
 import Diagnostics from './pages/Diagnostics';
 import History from './pages/History';
-import Settings from './pages/Settings';
 import type { Telemetry } from './lib/types';
 
 function computeHealthScore(tel: Telemetry | null): number {
@@ -88,10 +87,8 @@ function Console() {
             <RobotView tel={telemetry} />
           ) : page === 'diagnostics' ? (
             <Diagnostics tel={telemetry} />
-          ) : page === 'history' ? (
-            <History />
           ) : (
-            <Settings tel={telemetry} latency={latency} />
+            <History />
           )}
         </main>
       </div>
