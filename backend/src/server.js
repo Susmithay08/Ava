@@ -13,10 +13,12 @@ import {
   resetObstacles,
 } from './simulation.js';
 import { getSystemMetrics } from './systemMetrics.js';
+import { createFleet, stepFleet, fleetSummary } from './fleet.js';
 
 const PORT = process.env.PORT || 4000;
 
 const state = createInitialState();
+const fleet = createFleet();
 
 // ---- Event history (ring buffer) ----------------------------------------
 const history = [];
@@ -94,6 +96,8 @@ app.use(express.json());
 app.get('/api/health', (_req, res) => res.json({ ok: true, uptime: state.uptimeSec }));
 
 app.get('/api/robot', (_req, res) => res.json(buildSnapshot()));
+
+app.get('/api/fleet', (_req, res) => res.json(fleetSummary(fleet)));
 
 app.get('/api/diagnostics', (_req, res) => {
   res.json({
@@ -203,6 +207,7 @@ wss.on('connection', (ws) => {
 // ---- Simulation loop: 1 Hz -----------------------------------------------
 setInterval(() => {
   step(state, log);
+  stepFleet(fleet);
   const sys = getSystemMetrics();
   pushMetricsHistory(sys);
   broadcast(buildSnapshot());

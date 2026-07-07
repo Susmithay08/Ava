@@ -5,29 +5,31 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Temple Allen — orange on near-black. `mint`/`lime`/`deep` keep their
+        // names (used app-wide) but now hold orange values = brand accent.
         em: {
-          void: '#070b09',
-          coal: '#0b120e',
-          panel: '#0e1712',
-          mint: '#7ff2a8',
-          lime: '#35e17f',
-          deep: '#12b866',
-          orange: '#ff7a1a',
+          void: '#08090b',
+          coal: '#0d0f12',
+          panel: '#15171b',
+          mint: '#ff9a5a', // light orange (accent text)
+          lime: '#ff6a1a', // primary orange (buttons / glow)
+          deep: '#e5551a', // deep orange
+          orange: '#ff6a1a',
           amber: '#ffb020',
-          sky: '#86c8ff',
+          grn: '#22c55e', // healthy / running status
+          sky: '#7cc4ff',
           violet: '#b9a3ff',
-          ink: '#e8f0ea',
-          muted: '#8ea69a',
+          ink: '#eceef2',
+          muted: '#8b909a',
         },
-        // backward-compat aliases used by Diagnostics/History/Settings pages
-        emma: { orange: '#ff7a1a', amber: '#ffb020' },
+        emma: { orange: '#ff6a1a', amber: '#ffb020' },
         steel: {
-          950: '#070b09',
-          900: '#0b120e',
-          850: '#0e1712',
-          800: '#14201a',
-          700: 'rgba(127,242,168,0.08)',
-          600: 'rgba(127,242,168,0.14)',
+          950: '#08090b',
+          900: '#0d0f12',
+          850: '#15171b',
+          800: '#1b1e23',
+          700: 'rgba(255,255,255,0.06)',
+          600: 'rgba(255,255,255,0.12)',
         },
       },
       fontFamily: {
@@ -37,8 +39,8 @@ export default {
       },
       boxShadow: {
         glass: '0 12px 40px -8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)',
-        glow: '0 0 28px rgba(53,225,127,0.35)',
-        glowOrange: '0 0 28px rgba(255,122,26,0.4)',
+        glow: '0 0 28px rgba(255,106,26,0.35)',
+        glowOrange: '0 0 28px rgba(255,106,26,0.45)',
       },
       backdropBlur: { xs: '2px' },
       keyframes: {

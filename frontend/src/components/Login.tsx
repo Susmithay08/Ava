@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 
 export default function Login({ onLogin }: { onLogin: (operator: string) => void }) {
-  const [name, setName] = useState('A. Operator');
-  const [id, setId] = useState('OP-4471');
+  const [username, setUsername] = useState('Operator');
+  const [password, setPassword] = useState('');
+  const [showPw, setShowPw] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -12,62 +14,106 @@ export default function Login({ onLogin }: { onLogin: (operator: string) => void
       await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ operator: name }),
+        body: JSON.stringify({ operator: username }),
       });
     } catch {
       /* backend optional at login */
     }
-    setTimeout(() => onLogin(name), 450);
+    setTimeout(() => onLogin(username || 'Operator'), 450);
   };
 
   return (
-    <div className="atmosphere h-full w-full grid place-items-center relative overflow-hidden grid-floor">
-      <div className="absolute inset-0 overflow-hidden opacity-40 pointer-events-none">
-        <div className="h-40 w-full bg-gradient-to-b from-transparent via-em-lime/20 to-transparent animate-scan" />
-      </div>
+    <div className="h-full w-full relative overflow-hidden">
+      {/* Background: Temple Allen hero */}
+      <img src="/login.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/60" />
 
-      <form onSubmit={submit} className="relative z-10 glass edge-lit p-8 w-[400px] max-w-[90vw] animate-riseIn">
-        <div className="flex flex-col items-center mb-7">
-          <div className="w-16 h-16 rounded-2xl grid place-items-center bg-em-lime/15 border border-em-mint/30 shadow-glow mb-3">
-            <span className="h-display text-3xl font-bold text-em-mint">◤</span>
+      {/* Login panel on the right */}
+      <div className="relative z-10 h-full flex items-center justify-end px-[4vw]">
+        <form onSubmit={submit} className="w-[420px] max-w-[92vw] glass p-8 animate-riseIn">
+          <div className="text-center mb-6">
+            <div className="text-[11px] font-bold tracking-[0.25em] text-em-orange uppercase">Operator Console</div>
+            <h1 className="h-display text-3xl font-bold text-white mt-2">Welcome Back</h1>
+            <p className="text-sm text-em-muted mt-1.5">Sign in to access your system</p>
+            <div className="w-10 h-0.5 bg-em-orange mx-auto mt-4 rounded-full" />
           </div>
-          <h1 className="h-display text-xl font-bold text-em-ink tracking-wide">EMMA Operator Console</h1>
-          <p className="label mt-1.5">Robotic Surface Preparation</p>
-        </div>
 
-        <label className="block mb-4">
-          <span className="label">Operator name</span>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1.5 w-full bg-black/30 border border-em-mint/15 rounded-xl px-4 py-3 text-em-ink focus:border-em-mint focus:outline-none"
-            required
-          />
-        </label>
-        <label className="block mb-6">
-          <span className="label">Badge ID</span>
-          <input
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-            className="mt-1.5 w-full bg-black/30 border border-em-mint/15 rounded-xl px-4 py-3 text-em-ink font-mono focus:border-em-mint focus:outline-none"
-          />
-        </label>
+          <label className="block mb-4">
+            <span className="label">Username</span>
+            <div className="mt-1.5 flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl px-3.5 focus-within:border-em-orange transition-colors">
+              <UserIcon />
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                className="flex-1 bg-transparent py-3 text-em-ink placeholder:text-em-muted/60 focus:outline-none"
+                required
+              />
+            </div>
+          </label>
 
-        <button
-          type="submit"
-          disabled={busy}
-          className="btn w-full bg-em-lime/90 hover:bg-em-lime text-black font-bold py-3.5 text-base shadow-glow"
-        >
-          {busy ? 'Authenticating…' : 'Sign in to console'}
-        </button>
+          <label className="block mb-4">
+            <span className="label">Password</span>
+            <div className="mt-1.5 flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl px-3.5 focus-within:border-em-orange transition-colors">
+              <LockIcon />
+              <input
+                type={showPw ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="flex-1 bg-transparent py-3 text-em-ink placeholder:text-em-muted/60 focus:outline-none"
+              />
+              <button type="button" onClick={() => setShowPw((v) => !v)} className="text-em-muted hover:text-em-ink">
+                <EyeIcon off={showPw} />
+              </button>
+            </div>
+          </label>
 
-        <div className="mt-5 flex items-center justify-between text-[11px] text-em-muted">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-em-mint animate-pulse" /> Controller online
-          </span>
-          <span className="font-mono">SIM · no hardware required</span>
-        </div>
-      </form>
+          <div className="flex items-center justify-between mb-6 text-sm">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-em-muted">
+              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="accent-em-orange w-4 h-4" />
+              Remember me
+            </label>
+            <button type="button" className="text-em-orange hover:underline">
+              Forgot Password?
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            disabled={busy}
+            className="btn w-full flex items-center justify-center gap-2 py-3.5 text-base font-bold text-white shadow-glowOrange"
+            style={{ background: 'linear-gradient(90deg,#ff8a1a,#ff5a00)' }}
+          >
+            {busy ? 'Authenticating…' : 'SIGN IN'}
+            {!busy && <span className="text-lg">→</span>}
+          </button>
+
+          <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-em-muted">
+            <span className="w-2 h-2 rounded-full bg-em-grn animate-pulse" /> Controller online · SIM, no hardware required
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
+
+const UserIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6a1a" strokeWidth="1.8" strokeLinecap="round">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+  </svg>
+);
+const LockIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6a1a" strokeWidth="1.8" strokeLinecap="round">
+    <rect x="4" y="10" width="16" height="11" rx="2" />
+    <path d="M8 10V7a4 4 0 1 1 8 0v3" />
+  </svg>
+);
+const EyeIcon = ({ off }: { off: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+    <circle cx="12" cy="12" r="3" />
+    {off && <path d="M4 4l16 16" />}
+  </svg>
+);

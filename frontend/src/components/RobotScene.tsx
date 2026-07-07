@@ -5,10 +5,11 @@ import * as THREE from 'three';
 import type { Robot } from '../lib/types';
 
 type Palette = { key: string; ring: string; glow: string; arm: string };
+// Arm stays Temple-Allen orange; the pad/ring/label carry the health status.
 const HEALTH: Record<string, Palette> = {
-  healthy: { key: 'healthy', ring: '#7ff2a8', glow: '#35e17f', arm: '#3fae7a' },
-  warning: { key: 'warning', ring: '#ffd166', glow: '#ffb020', arm: '#c98a2a' },
-  fault: { key: 'fault', ring: '#ff8a8a', glow: '#ef4444', arm: '#c0392b' },
+  healthy: { key: 'healthy', ring: '#22c55e', glow: '#22c55e', arm: '#ff6a1a' },
+  warning: { key: 'warning', ring: '#ffb020', glow: '#ffb020', arm: '#ff6a1a' },
+  fault: { key: 'fault', ring: '#ff6b6b', glow: '#ff6b6b', arm: '#ff6a1a' },
 };
 
 function Arm({ joints, palette, running, animationSpeed }: { joints: number[]; palette: Palette; running: boolean; animationSpeed: number }) {
@@ -26,10 +27,10 @@ function Arm({ joints, palette, running, animationSpeed }: { joints: number[]; p
     if (wrist.current) wrist.current.rotation.z += (t[3] - wrist.current.rotation.z) * k;
   });
 
-  const steel = <meshStandardMaterial color="#e9eef0" metalness={0.7} roughness={0.32} />;
-  const dark = <meshStandardMaterial color="#1b2620" metalness={0.85} roughness={0.28} />;
+  const steel = <meshStandardMaterial color="#c9ccd2" metalness={0.75} roughness={0.35} />;
+  const dark = <meshStandardMaterial color="#16181c" metalness={0.85} roughness={0.28} />;
   const accent = (
-    <meshStandardMaterial color={palette.arm} metalness={0.55} roughness={0.3} emissive={palette.glow} emissiveIntensity={0.4} />
+    <meshStandardMaterial color={palette.arm} metalness={0.55} roughness={0.3} emissive={palette.arm} emissiveIntensity={0.35} />
   );
 
   return (
@@ -119,8 +120,8 @@ function Scene({ robot, animationSpeed }: { robot: Robot; animationSpeed: number
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 9, 5]} intensity={1.5} castShadow shadow-mapSize={[2048, 2048]} />
-      <directionalLight position={[-6, 3, -5]} intensity={0.5} color={palette.glow} />
-      <spotLight position={[0, 8, 0]} angle={0.5} penumbra={1} intensity={0.6} color="#7ff2a8" />
+      <directionalLight position={[-6, 3, -5]} intensity={0.5} color="#ff6a1a" />
+      <spotLight position={[0, 8, 0]} angle={0.5} penumbra={1} intensity={0.6} color="#ff8a3d" />
 
       <Float speed={running ? 1.4 : 0.8} rotationIntensity={0.15} floatIntensity={0.4}>
         <Arm joints={robot.joints} palette={palette} running={running} animationSpeed={animationSpeed} />
@@ -142,9 +143,9 @@ function Scene({ robot, animationSpeed }: { robot: Robot; animationSpeed: number
         position={[0, -2.2, 0]}
         args={[30, 30]}
         cellSize={0.7}
-        cellColor="#173026"
+        cellColor="#2a1c12"
         sectionSize={3.5}
-        sectionColor="#2f6b4a"
+        sectionColor="#6b3a1a"
         fadeDistance={26}
         fadeStrength={1.5}
         infiniteGrid

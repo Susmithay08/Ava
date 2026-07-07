@@ -4,6 +4,7 @@ import { useTelemetry, sendControl, startJob } from './lib/useTelemetry';
 import TopBar from './components/TopBar';
 import Sidebar, { Page } from './components/Sidebar';
 import Login from './components/Login';
+import Overview from './pages/Overview';
 import Dashboard from './pages/Dashboard';
 import RobotView from './pages/RobotView';
 import Diagnostics from './pages/Diagnostics';
@@ -29,7 +30,7 @@ function Console() {
   const { settings } = useSettings();
   const [loggedIn, setLoggedIn] = useState(false);
   const [operator, setOperator] = useState(settings.operatorName);
-  const [page, setPage] = useState<Page>('dashboard');
+  const [page, setPage] = useState<Page>('overview');
   const { telemetry, conn, latency } = useTelemetry();
 
   useEffect(() => {
@@ -37,67 +38,55 @@ function Console() {
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
-      if (e.code === 'Space') {
-        e.preventDefault();
-        sendControl('pause');
-      } else if (e.code === 'Enter') {
-        e.preventDefault();
-        telemetry?.robot.status === 'paused' ? sendControl('resume') : startJob();
-      } else if (e.code === 'Escape') {
-        e.preventDefault();
-        sendControl('estop');
-      }
+      if (e.code === 'Space') { e.preventDefault(); sendControl('pause'); }
+      else if (e.code === 'Enter') { e.preventDefault(); telemetry?.robot.status === 'paused' ? sendControl('resume') : startJob(); }
+      else if (e.code === 'Escape') { e.preventDefault(); sendControl('estop'); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [loggedIn, telemetry]);
 
   if (!loggedIn) {
-    return (
-      <Login
-        onLogin={(name) => {
-          setOperator(name);
-          setLoggedIn(true);
-        }}
-      />
-    );
+    return <Login onLogin={(name) => { setOperator(name); setLoggedIn(true); }} />;
   }
 
   const robot = telemetry?.robot ?? null;
   const estop = robot?.status === 'estop';
   const healthScore = computeHealthScore(telemetry);
+  const immersive = page === 'dashboard' || page === 'robot';
 
   return (
-    <div className="atmosphere relative h-full flex flex-col">
-      <TopBar robot={robot} conn={conn} latency={latency} operator={operator} healthScore={healthScore} />
+    <div className="atmosphere relative h-full flex">
+      <Sidebar page={page} setPage={setPage} faultCount={robot?.faults.length ?? 0} health={robot?.health || 'healthy'} />
 
-      {estop && (
-        <div className="relative z-20 mx-4 mb-1 rounded-2xl bg-em-orange/90 text-black px-5 py-2.5 flex items-center justify-between shadow-glowOrange animate-riseIn">
-          <div className="flex items-center gap-3 font-bold tracking-wide">
-            <span className="text-xl">⛔</span> EMERGENCY STOP — ALL MOTION HALTED
+      <div className="flex-1 flex flex-col min-w-0">
+        <TopBar robot={robot} conn={conn} latency={latency} operator={operator} healthScore={healthScore} />
+
+        {estop && (
+          <div className="relative z-20 mx-4 mt-2 rounded-2xl bg-em-orange/90 text-black px-5 py-2.5 flex items-center justify-between shadow-glowOrange animate-riseIn">
+            <div className="flex items-center gap-3 font-bold tracking-wide">
+              <span className="text-xl">⛔</span> EMERGENCY STOP — ALL MOTION HALTED
+            </div>
+            <button onClick={() => fetch('/api/reset', { method: 'POST' })} className="btn bg-black/85 text-em-orange font-bold px-4 py-1.5 text-sm">
+              Reset &amp; clear
+            </button>
           </div>
-          <button onClick={() => fetch('/api/reset', { method: 'POST' })} className="btn bg-black/85 text-em-mint font-bold px-4 py-1.5 text-sm">
-            Reset & clear
-          </button>
-        </div>
-      )}
+        )}
 
-      <div className="relative z-10 flex-1 flex min-h-0">
-        <Sidebar page={page} setPage={setPage} faultCount={robot?.faults.length ?? 0} />
-        <main className="flex-1 min-w-0 pr-4 pb-2 pl-2">
+        <main className={`flex-1 min-w-0 ${immersive ? 'p-3' : 'p-6'} overflow-hidden`}>
           {!telemetry ? (
             <div className="h-full grid place-items-center text-em-muted gap-3">
-              <div className="w-10 h-10 border-2 border-em-mint border-t-transparent rounded-full animate-spin" />
-              <span>Connecting to EMMA controller…</span>
+              <div className="w-10 h-10 border-2 border-em-orange border-t-transparent rounded-full animate-spin" />
+              <span>Connecting to Temple Allen controller…</span>
             </div>
+          ) : page === 'overview' ? (
+            <Overview tel={telemetry} latency={latency} />
           ) : page === 'dashboard' ? (
             <Dashboard tel={telemetry} latency={latency} conn={conn} />
           ) : page === 'robot' ? (
             <RobotView tel={telemetry} />
           ) : page === 'diagnostics' ? (
-            <div className="h-full overflow-hidden rounded-3xl">
-              <Diagnostics tel={telemetry} />
-            </div>
+            <Diagnostics tel={telemetry} />
           ) : page === 'history' ? (
             <History />
           ) : (

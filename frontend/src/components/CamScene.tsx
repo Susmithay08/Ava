@@ -20,7 +20,7 @@ const PIVOT_Y = FLOOR_Y + SHOULDER_H;
 type CarryRef = React.MutableRefObject<{ id: number; active: boolean; pos: THREE.Vector3 }>;
 
 function healthColor(h: string) {
-  return h === 'fault' ? '#ff6b6b' : h === 'warning' ? '#ffb020' : '#35e17f';
+  return h === 'fault' ? '#ff6b6b' : h === 'warning' ? '#ffb020' : '#22c55e';
 }
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
@@ -154,9 +154,9 @@ function ArmRig({ robotRef, animationSpeed, carry }: { robotRef: React.MutableRe
     }
   });
 
-  const steel = <meshStandardMaterial color="#e9eef0" metalness={0.7} roughness={0.32} />;
-  const dark = <meshStandardMaterial color="#1b2620" metalness={0.85} roughness={0.28} />;
-  const accent = <meshStandardMaterial color="#3fae7a" emissive="#35e17f" emissiveIntensity={0.4} metalness={0.5} roughness={0.3} />;
+  const steel = <meshStandardMaterial color="#c9ccd2" metalness={0.75} roughness={0.35} />;
+  const dark = <meshStandardMaterial color="#16181c" metalness={0.85} roughness={0.28} />;
+  const accent = <meshStandardMaterial color="#ff6a1a" emissive="#ff6a1a" emissiveIntensity={0.35} metalness={0.5} roughness={0.3} />;
 
   return (
     <group ref={root} position={[-HALF, FLOOR_Y, STANDOFF]}>
@@ -306,14 +306,14 @@ function Scene({ robotRef, animationSpeed }: { robotRef: React.MutableRefObject<
     <>
       <ambientLight intensity={0.45} />
       <directionalLight position={[4, 6, 6]} intensity={1.4} castShadow shadow-mapSize={[1024, 1024]} />
-      <directionalLight position={[-5, 3, 2]} intensity={0.4} color="#35e17f" />
+      <directionalLight position={[-5, 3, 2]} intensity={0.4} color="#ff6a1a" />
       <Panel robotRef={robotRef} />
       <Track />
       <ArmRig robotRef={robotRef} animationSpeed={animationSpeed} carry={carry} />
       <Spray robotRef={robotRef} />
       <Obstacles robotRef={robotRef} carry={carry} />
       <ContactShadows position={[0, FLOOR_Y, 0]} opacity={0.45} scale={16} blur={2.5} far={4} />
-      <Grid position={[0, FLOOR_Y, 0]} args={[30, 20]} cellSize={0.6} cellColor="#173026" sectionSize={3} sectionColor="#2f6b4a" fadeDistance={22} infiniteGrid />
+      <Grid position={[0, FLOOR_Y, 0]} args={[30, 20]} cellSize={0.6} cellColor="#2a1c12" sectionSize={3} sectionColor="#6b3a1a" fadeDistance={22} infiniteGrid />
       <Environment preset="warehouse" />
       <OrbitControls enablePan minDistance={5} maxDistance={16} maxPolarAngle={Math.PI / 2.05} target={[0, 0.3, 0]} />
     </>
