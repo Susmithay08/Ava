@@ -63,11 +63,19 @@ body {
            active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed;
   }
   .label {
-    @apply text-[10px] uppercase tracking-[0.18em] text-em-muted font-medium;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 500;
+    color: #8ea69a;
   }
   /* legacy alias used by Diagnostics/History/Settings */
   .card-label {
-    @apply text-[11px] uppercase tracking-[0.15em] text-em-muted font-medium;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 500;
+    color: #8ea69a;
   }
   .h-display {
     font-family: 'Space Grotesk', sans-serif;
