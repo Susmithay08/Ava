@@ -23,10 +23,10 @@ export default function Login({ onLogin }: { onLogin: (operator: string) => void
   };
 
   return (
-    <div className="h-full w-full relative overflow-hidden">
-      {/* Background: Temple Allen hero */}
-      <img src="/login.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/60" />
+    <div className="h-full w-full relative overflow-hidden bg-black">
+      {/* Background: Temple Allen hero — show the whole image */}
+      <img src="/login.png" alt="" className="absolute inset-0 w-full h-full object-contain object-center" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/50" />
 
       {/* Login panel on the right */}
       <div className="relative z-10 h-full flex items-center justify-end px-[4vw]">
