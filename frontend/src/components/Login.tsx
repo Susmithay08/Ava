@@ -23,14 +23,16 @@ export default function Login({ onLogin }: { onLogin: (operator: string) => void
   };
 
   return (
-    <div className="h-full w-full relative overflow-hidden bg-black">
-      {/* Background: Temple Allen hero — show the whole image */}
-      <img src="/login.png" alt="" className="absolute inset-0 w-full h-full object-contain object-center" />
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/50" />
+    <div className="h-full w-full flex bg-em-void overflow-hidden">
+      {/* Left: brand hero image (robot + logo stay framed) */}
+      <div className="relative flex-1 hidden md:block">
+        <img src="/login.png" alt="Temple Allen" className="absolute inset-0 w-full h-full object-cover object-left" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-em-void" />
+      </div>
 
-      {/* Login panel on the right */}
-      <div className="relative z-10 h-full flex items-center justify-end px-[4vw]">
-        <form onSubmit={submit} className="w-[420px] max-w-[92vw] glass p-8 animate-riseIn">
+      {/* Right: sign-in column */}
+      <div className="w-full md:w-[460px] shrink-0 flex items-center justify-center p-6 sm:p-10">
+        <form onSubmit={submit} className="w-full max-w-[400px] glass p-8 animate-riseIn">
           <div className="text-center mb-6">
             <div className="text-[11px] font-bold tracking-[0.25em] text-em-orange uppercase">Operator Console</div>
             <h1 className="h-display text-3xl font-bold text-white mt-2">Welcome Back</h1>
