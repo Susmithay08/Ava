@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { SettingsProvider, useSettings } from './lib/settings';
 import { useTelemetry, sendControl, startJob } from './lib/useTelemetry';
-import Header from './components/Header';
+import TopBar from './components/TopBar';
 import Sidebar, { Page } from './components/Sidebar';
 import Login from './components/Login';
 import Dashboard from './pages/Dashboard';
@@ -11,7 +11,6 @@ import History from './pages/History';
 import Settings from './pages/Settings';
 import type { Telemetry } from './lib/types';
 
-// Derive a 0-100 system health score from live + modelled signals.
 function computeHealthScore(tel: Telemetry | null): number {
   if (!tel) return 0;
   const r = tel.robot;
@@ -33,7 +32,6 @@ function Console() {
   const [page, setPage] = useState<Page>('dashboard');
   const { telemetry, conn, latency } = useTelemetry();
 
-  // Keyboard shortcuts: Space=Pause, Enter=Start, Esc=E-Stop
   useEffect(() => {
     if (!loggedIn) return;
     const onKey = (e: KeyboardEvent) => {
@@ -44,9 +42,7 @@ function Console() {
         sendControl('pause');
       } else if (e.code === 'Enter') {
         e.preventDefault();
-        const st = telemetry?.robot.status;
-        if (st === 'paused') sendControl('resume');
-        else startJob();
+        telemetry?.robot.status === 'paused' ? sendControl('resume') : startJob();
       } else if (e.code === 'Escape') {
         e.preventDefault();
         sendControl('estop');
@@ -72,30 +68,26 @@ function Console() {
   const healthScore = computeHealthScore(telemetry);
 
   return (
-    <div className="h-full flex flex-col">
-      <Header robot={robot} conn={conn} latency={latency} operator={operator} healthScore={healthScore} />
+    <div className="atmosphere relative h-full flex flex-col">
+      <TopBar robot={robot} conn={conn} latency={latency} operator={operator} healthScore={healthScore} />
 
-      {/* Emergency stop banner */}
       {estop && (
-        <div className="bg-red-600 text-white px-6 py-2.5 flex items-center justify-between animate-pulse shrink-0">
+        <div className="relative z-20 mx-4 mb-1 rounded-2xl bg-em-orange/90 text-black px-5 py-2.5 flex items-center justify-between shadow-glowOrange animate-riseIn">
           <div className="flex items-center gap-3 font-bold tracking-wide">
-            <span className="text-xl">⛔</span> EMERGENCY STOP ACTIVE — ALL MOTION HALTED
+            <span className="text-xl">⛔</span> EMERGENCY STOP — ALL MOTION HALTED
           </div>
-          <button
-            onClick={() => fetch('/api/reset', { method: 'POST' })}
-            className="btn bg-white text-red-600 font-bold px-4 py-1.5 text-sm"
-          >
-            Reset & Clear
+          <button onClick={() => fetch('/api/reset', { method: 'POST' })} className="btn bg-black/85 text-em-mint font-bold px-4 py-1.5 text-sm">
+            Reset & clear
           </button>
         </div>
       )}
 
-      <div className="flex-1 flex min-h-0">
+      <div className="relative z-10 flex-1 flex min-h-0">
         <Sidebar page={page} setPage={setPage} faultCount={robot?.faults.length ?? 0} />
-        <main className="flex-1 p-4 min-w-0 overflow-hidden">
+        <main className="flex-1 min-w-0 pr-4 pb-2 pl-2">
           {!telemetry ? (
-            <div className="h-full flex flex-col items-center justify-center text-slate-500 gap-3">
-              <div className="w-10 h-10 border-3 border-emma-orange border-t-transparent rounded-full animate-spin" />
+            <div className="h-full grid place-items-center text-em-muted gap-3">
+              <div className="w-10 h-10 border-2 border-em-mint border-t-transparent rounded-full animate-spin" />
               <span>Connecting to EMMA controller…</span>
             </div>
           ) : page === 'dashboard' ? (
@@ -103,22 +95,15 @@ function Console() {
           ) : page === 'robot' ? (
             <RobotView tel={telemetry} />
           ) : page === 'diagnostics' ? (
-            <Diagnostics tel={telemetry} />
+            <div className="h-full overflow-hidden rounded-3xl">
+              <Diagnostics tel={telemetry} />
+            </div>
           ) : page === 'history' ? (
             <History />
           ) : (
             <Settings tel={telemetry} latency={latency} />
           )}
         </main>
-      </div>
-
-      {/* Keyboard hint bar */}
-      <div className="h-8 shrink-0 glass !rounded-none !border-x-0 !border-b-0 flex items-center justify-center gap-6 text-[11px] text-slate-500 font-mono">
-        <span><kbd className="text-slate-300">Enter</kbd> Start/Resume</span>
-        <span><kbd className="text-slate-300">Space</kbd> Pause</span>
-        <span><kbd className="text-slate-300">Esc</kbd> E-Stop</span>
-        <span className="text-slate-600">·</span>
-        <span>Telemetry {conn === 'online' ? '● live' : '○ offline'}</span>
       </div>
     </div>
   );

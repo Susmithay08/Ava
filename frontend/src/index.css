@@ -14,30 +14,77 @@ body,
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #0a0e14;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #e8f0ea;
   overflow: hidden;
+  /* near-black with a soft green atmosphere, like ref1 */
+  background:
+    radial-gradient(1200px 700px at 72% 12%, rgba(53, 225, 127, 0.14), transparent 60%),
+    radial-gradient(900px 600px at 20% 100%, rgba(18, 184, 102, 0.08), transparent 55%),
+    #070b09;
 }
 
-/* Light mode overrides */
-html.light body {
-  background: #eef1f6;
+/* ambient dot grid layer applied on the app root */
+.atmosphere::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(127, 242, 168, 0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: radial-gradient(1000px 700px at 65% 20%, black, transparent 75%);
+  z-index: 0;
 }
 
 @layer components {
   .glass {
-    @apply bg-steel-850/70 backdrop-blur-xl border border-white/5 rounded-2xl shadow-glass;
+    background: linear-gradient(160deg, rgba(20, 32, 25, 0.62), rgba(9, 15, 12, 0.5));
+    backdrop-filter: blur(22px) saturate(1.2);
+    -webkit-backdrop-filter: blur(22px) saturate(1.2);
+    border: 1px solid rgba(127, 242, 168, 0.1);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
-  html.light .glass {
-    @apply bg-white/70 border-black/5;
+  .glass-tight {
+    background: rgba(12, 20, 15, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(127, 242, 168, 0.08);
+    border-radius: 14px;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium;
+    background: rgba(9, 15, 12, 0.6);
+    border: 1px solid rgba(127, 242, 168, 0.14);
+    backdrop-filter: blur(10px);
   }
   .btn {
-    @apply select-none rounded-xl font-semibold tracking-wide transition-all duration-150
+    @apply select-none rounded-2xl font-semibold tracking-wide transition-all duration-150
            active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed;
   }
-  .card-label {
-    @apply text-[11px] uppercase tracking-[0.15em] text-slate-400 font-medium;
+  .label {
+    @apply text-[10px] uppercase tracking-[0.18em] text-em-muted font-medium;
   }
+  /* legacy alias used by Diagnostics/History/Settings */
+  .card-label {
+    @apply text-[11px] uppercase tracking-[0.15em] text-em-muted font-medium;
+  }
+  .h-display {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+/* top light edge on glass cards */
+.edge-lit {
+  position: relative;
+}
+.edge-lit::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(127, 242, 168, 0.5), transparent);
+  border-radius: inherit;
 }
 
 ::-webkit-scrollbar {
@@ -48,21 +95,43 @@ html.light body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #374357;
+  background: rgba(127, 242, 168, 0.18);
   border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(127, 242, 168, 0.3);
+}
+
+/* range sliders */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #7ff2a8;
+  box-shadow: 0 0 12px rgba(53, 225, 127, 0.7);
+  margin-top: -8px;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
 }
 
 .grid-floor {
-  background-image: linear-gradient(rgba(255, 107, 26, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 107, 26, 0.08) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(127, 242, 168, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127, 242, 168, 0.06) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
-@keyframes floormove {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 0 40px;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

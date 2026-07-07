@@ -17,59 +17,55 @@ export default function Login({ onLogin }: { onLogin: (operator: string) => void
     } catch {
       /* backend optional at login */
     }
-    setTimeout(() => onLogin(name), 500);
+    setTimeout(() => onLogin(name), 450);
   };
 
   return (
-    <div className="h-full w-full flex items-center justify-center grid-floor relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-steel-950/40 to-steel-950" />
-      {/* animated scanline */}
-      <div className="absolute inset-0 overflow-hidden opacity-30 pointer-events-none">
-        <div className="h-32 w-full bg-gradient-to-b from-transparent via-emma-orange/20 to-transparent animate-scan" />
+    <div className="atmosphere h-full w-full grid place-items-center relative overflow-hidden grid-floor">
+      <div className="absolute inset-0 overflow-hidden opacity-40 pointer-events-none">
+        <div className="h-40 w-full bg-gradient-to-b from-transparent via-em-lime/20 to-transparent animate-scan" />
       </div>
 
-      <form onSubmit={submit} className="relative glass p-8 w-[400px] max-w-[90vw]">
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emma-orange to-emma-amber flex items-center justify-center font-black text-steel-950 text-3xl shadow-glow mb-3">
-            E
+      <form onSubmit={submit} className="relative z-10 glass edge-lit p-8 w-[400px] max-w-[90vw] animate-riseIn">
+        <div className="flex flex-col items-center mb-7">
+          <div className="w-16 h-16 rounded-2xl grid place-items-center bg-em-lime/15 border border-em-mint/30 shadow-glow mb-3">
+            <span className="h-display text-3xl font-bold text-em-mint">◤</span>
           </div>
-          <h1 className="text-xl font-bold text-slate-100 tracking-wide">EMMA Operator Console</h1>
-          <p className="text-xs text-slate-500 uppercase tracking-[0.2em] mt-1">
-            Robotic Surface Preparation
-          </p>
+          <h1 className="h-display text-xl font-bold text-em-ink tracking-wide">EMMA Operator Console</h1>
+          <p className="label mt-1.5">Robotic Surface Preparation</p>
         </div>
 
         <label className="block mb-4">
-          <span className="card-label">Operator Name</span>
+          <span className="label">Operator name</span>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1.5 w-full bg-steel-800 border border-white/10 rounded-xl px-4 py-3 text-slate-100 focus:border-emma-orange focus:outline-none"
+            className="mt-1.5 w-full bg-black/30 border border-em-mint/15 rounded-xl px-4 py-3 text-em-ink focus:border-em-mint focus:outline-none"
             required
           />
         </label>
         <label className="block mb-6">
-          <span className="card-label">Badge ID</span>
+          <span className="label">Badge ID</span>
           <input
             value={id}
             onChange={(e) => setId(e.target.value)}
-            className="mt-1.5 w-full bg-steel-800 border border-white/10 rounded-xl px-4 py-3 text-slate-100 font-mono focus:border-emma-orange focus:outline-none"
+            className="mt-1.5 w-full bg-black/30 border border-em-mint/15 rounded-xl px-4 py-3 text-em-ink font-mono focus:border-em-mint focus:outline-none"
           />
         </label>
 
         <button
           type="submit"
           disabled={busy}
-          className="btn w-full bg-gradient-to-r from-emma-orange to-emma-amber text-steel-950 font-bold py-3.5 text-base shadow-glow"
+          className="btn w-full bg-em-lime/90 hover:bg-em-lime text-black font-bold py-3.5 text-base shadow-glow"
         >
-          {busy ? 'Authenticating…' : 'Sign In to Console'}
+          {busy ? 'Authenticating…' : 'Sign in to console'}
         </button>
 
-        <div className="mt-5 flex items-center justify-between text-[11px] text-slate-500">
+        <div className="mt-5 flex items-center justify-between text-[11px] text-em-muted">
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Controller online
+            <span className="w-2 h-2 rounded-full bg-em-mint animate-pulse" /> Controller online
           </span>
-          <span className="font-mono">SIM · No hardware required</span>
+          <span className="font-mono">SIM · no hardware required</span>
         </div>
       </form>
     </div>
